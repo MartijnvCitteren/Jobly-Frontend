@@ -22,12 +22,12 @@ export const Button: React.FC<ButtonProps> = ({
   ...props
 }) => {
   const baseStyles =
-    'rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2'
+    'rounded-xl font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 shadow-sm'
 
   const variantStyles = {
-    primary: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500',
-    secondary: 'bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500',
-    outline: 'border-2 border-blue-600 text-blue-600 hover:bg-blue-50 focus:ring-blue-500',
+    primary: 'bg-indigo-500 text-white hover:bg-indigo-600 hover:shadow-md focus:ring-indigo-400',
+    secondary: 'bg-slate-200 text-slate-700 hover:bg-slate-300 hover:shadow-md focus:ring-slate-400',
+    outline: 'border-2 border-indigo-400 text-indigo-600 hover:bg-indigo-50 focus:ring-indigo-300',
   }
 
   const sizeStyles = {

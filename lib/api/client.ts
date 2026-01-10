@@ -4,7 +4,7 @@
  * Base fetch wrapper met error handling en type safety
  */
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8090/api/v1'
 
 export class ApiError extends Error {
   constructor(

@@ -15,21 +15,21 @@ describe('Button Component', () => {
       render(<Button>Primary</Button>)
 
       const button = screen.getByRole('button')
-      expect(button).toHaveClass('bg-blue-600')
+      expect(button).toHaveClass('bg-indigo-500')
     })
 
     it('should apply secondary variant styles', () => {
       render(<Button variant="secondary">Secondary</Button>)
 
       const button = screen.getByRole('button')
-      expect(button).toHaveClass('bg-gray-600')
+      expect(button).toHaveClass('bg-slate-200')
     })
 
     it('should apply outline variant styles', () => {
       render(<Button variant="outline">Outline</Button>)
 
       const button = screen.getByRole('button')
-      expect(button).toHaveClass('border-2', 'border-blue-600')
+      expect(button).toHaveClass('border-2', 'border-indigo-400')
     })
   })
 
