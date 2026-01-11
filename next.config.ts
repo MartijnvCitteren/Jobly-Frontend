@@ -3,7 +3,7 @@ import type { NextConfig } from 'next'
 const nextConfig: NextConfig = {
   // Security & Performance
   reactStrictMode: true,
-  poweredByHeader: false, // Verberg X-Powered-By header
+  poweredByHeader: false, // Verbergt X-Powered-By header
 
   // Compiler optimizations
   compiler: {
