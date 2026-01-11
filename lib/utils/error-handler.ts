@@ -183,7 +183,7 @@ export async function retryWithBackoff<T>(
       // Exponential backoff: 1s, 2s, 4s, etc.
       const delay = initialDelay * Math.pow(2, attempt)
       logger.warn(`Retrying after ${delay}ms (attempt ${attempt + 1}/${maxRetries})`)
-      await new Promise(resolve => setTimeout(resolve, delay))
+      await new Promise((resolve) => setTimeout(resolve, delay))
     }
   }
 
