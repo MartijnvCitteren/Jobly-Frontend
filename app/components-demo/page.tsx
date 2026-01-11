@@ -96,9 +96,59 @@ export default function ComponentsDemo() {
 
   const handleWizardSubmit = async (data: VacancyFormData) => {
     console.log('Wizard submitted:', data)
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-    alert('Vacature aangemaakt! Check de console voor de data.')
-    setShowWizardDemo(false)
+
+    try {
+      // Dit is een demo, dus we maken een minimale dataset voor de API
+      // In productie zou je naar /vacancies/create moeten gaan voor de volledige wizard
+      const { createCompanyAndVacancy } = await import('@/lib/api/vacancy-repository')
+      const {
+        Country,
+        SeniorityLevel,
+        WritingStyle,
+        Language,
+      } = await import('@/lib/domain/vacancy.types')
+
+      // Map de demo data naar het juiste formaat
+      const seniorityMap: Record<string, any> = {
+        junior: SeniorityLevel.JUNIOR,
+        medior: SeniorityLevel.MEDIOR,
+        senior: SeniorityLevel.SENIOR,
+      }
+
+      // Maak een geldige API request
+      const result = await createCompanyAndVacancy(
+        {
+          companyName: data.company,
+          companyWebsite: 'www.example.com', // Demo website
+          country: Country.THE_NETHERLANDS,
+        },
+        {
+          jobTitle: data.jobTitle,
+          seniorityLevel: seniorityMap[data.experience] || SeniorityLevel.MEDIOR,
+          jobSummary: data.description || 'Demo vacature gemaakt via de component demo',
+          writingStyle: {
+            writingStyle: WritingStyle.BUSINESS_CASUAL,
+            language: Language.DUTCH,
+          },
+        }
+      )
+
+      console.log('Vacancy generated:', result)
+      alert(
+        'Vacature succesvol gegenereerd via de API!\n\n' +
+          `Samenvatting: ${result.summary || 'N/A'}\n\n` +
+          'Check de console voor de volledige response.'
+      )
+    } catch (error) {
+      console.error('API Error:', error)
+      alert(
+        'Demo API call:\n\n' +
+          `Error: ${error instanceof Error ? error.message : 'Unknown error'}\n\n` +
+          'Check de console voor meer details.'
+      )
+    } finally {
+      setShowWizardDemo(false)
+    }
   }
 
   const renderWizardStep = ({

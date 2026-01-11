@@ -125,7 +125,7 @@ describe('WizardStepSection', () => {
       )
 
       expect(screen.getByText('Just content')).toBeInTheDocument()
-      
+
       // Geen h3 heading zonder title
       expect(screen.queryByRole('heading', { level: 3 })).not.toBeInTheDocument()
     })

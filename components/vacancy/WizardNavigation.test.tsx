@@ -147,7 +147,7 @@ describe('WizardNavigation', () => {
 
       const prevButton = screen.getByText('Vorige').closest('button')
       expect(prevButton).toBeDisabled()
-      
+
       // Loading button toont "Loading..."
       expect(screen.getByText('Loading...')).toBeInTheDocument()
     })

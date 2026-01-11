@@ -132,7 +132,8 @@ describe('useVacancyGeneration', () => {
       // Error state
       expect(result.current.isError).toBe(true)
       expect(result.current.isLoading).toBe(false)
-      expect(result.current.error).toBe(errorMessage)
+      expect(result.current.error).toBeTruthy()
+      expect(result.current.error?.message).toBe(errorMessage)
       expect(result.current.vacancy).toBeNull()
     })
 
@@ -151,7 +152,9 @@ describe('useVacancyGeneration', () => {
         expect(result.current.status).toBe('error')
       })
 
-      expect(result.current.error).toBe('Er is een onbekende fout opgetreden')
+      expect(result.current.error).toBeTruthy()
+      expect(result.current.error?.message).toBe('String error')
+      expect(result.current.error?.userMessage).toContain('onverwachte fout')
     })
 
     it('should reset previous results on new generation', async () => {

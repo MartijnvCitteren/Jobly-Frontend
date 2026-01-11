@@ -134,10 +134,13 @@ describe('Vacancy Repository', () => {
       expect(response.summary).toBeDefined()
       expect(response.jobDescription).toBeDefined()
       expect(global.fetch).toHaveBeenCalledWith(
-        `${API_BASE_URL}/create-vacancy?requestId=${requestId}`,
+        `${API_BASE_URL}/create-vacancy`,
         expect.objectContaining({
           method: 'POST',
           body: JSON.stringify(jobInfo),
+          headers: expect.objectContaining({
+            'requestId': requestId,
+          }),
         })
       )
     })
@@ -237,10 +240,13 @@ describe('Vacancy Repository', () => {
       // Verify tweede call met token
       expect(global.fetch).toHaveBeenNthCalledWith(
         2,
-        `${API_BASE_URL}/create-vacancy?requestId=${mockToken.token}`,
+        `${API_BASE_URL}/create-vacancy`,
         expect.objectContaining({
           method: 'POST',
           body: JSON.stringify(jobInfo),
+          headers: expect.objectContaining({
+            'requestId': mockToken.token,
+          }),
         })
       )
     })

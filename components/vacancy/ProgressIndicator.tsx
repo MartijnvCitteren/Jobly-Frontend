@@ -83,7 +83,7 @@ export const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
                   onClick={() => handleStepClick(index)}
                   disabled={!clickable}
                   className={`
-                    relative z-10 w-10 h-10 rounded-full border-2 
+                    relative z-10 w-10 h-10 rounded-full border-2
                     flex items-center justify-center
                     transition-all duration-300 ease-out
                     font-semibold text-sm

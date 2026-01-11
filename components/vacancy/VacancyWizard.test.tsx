@@ -98,7 +98,7 @@ describe('VacancyWizard', () => {
   describe('Rendering', () => {
     it('rendert wizard met titel en beschrijving', () => {
       const onSubmit = jest.fn()
-      
+
       render(
         <VacancyWizard
           steps={getMockSteps()}
@@ -116,7 +116,7 @@ describe('VacancyWizard', () => {
 
     it('rendert zonder titel en beschrijving', () => {
       const onSubmit = jest.fn()
-      
+
       render(
         <VacancyWizard
           steps={getMockSteps()}
@@ -132,7 +132,7 @@ describe('VacancyWizard', () => {
 
     it('rendert progress indicator met correcte stappen', () => {
       const onSubmit = jest.fn()
-      
+
       render(
         <VacancyWizard
           steps={getMockSteps()}
@@ -150,7 +150,7 @@ describe('VacancyWizard', () => {
 
     it('rendert de eerste stap initieel', () => {
       const onSubmit = jest.fn()
-      
+
       render(
         <VacancyWizard
           steps={getMockSteps()}
@@ -171,7 +171,7 @@ describe('VacancyWizard', () => {
 
     it('toont voortgang tekst', () => {
       const onSubmit = jest.fn()
-      
+
       render(
         <VacancyWizard
           steps={getMockSteps()}
@@ -191,7 +191,7 @@ describe('VacancyWizard', () => {
       const onSubmit = jest.fn()
       const initialData = { ...mockInitialData, name: 'John' }
       testFormData = initialData
-      
+
       render(
         <VacancyWizard
           steps={getMockSteps()}
@@ -218,7 +218,7 @@ describe('VacancyWizard', () => {
       const onSubmit = jest.fn()
       const initialData = { ...mockInitialData, name: 'John', email: 'john@test.com' }
       testFormData = initialData
-      
+
       render(
         <VacancyWizard
           steps={getMockSteps()}
@@ -244,7 +244,7 @@ describe('VacancyWizard', () => {
     it('disabled Next button wanneer validatie faalt', () => {
       const onSubmit = jest.fn()
       testFormData = mockInitialData
-      
+
       render(
         <VacancyWizard
           steps={getMockSteps()}
@@ -262,7 +262,7 @@ describe('VacancyWizard', () => {
       const onSubmit = jest.fn()
       const initialData = { ...mockInitialData, name: 'John' }
       testFormData = initialData
-      
+
       render(
         <VacancyWizard
           steps={getMockSteps()}
@@ -281,7 +281,7 @@ describe('VacancyWizard', () => {
     it('update form data via input', async () => {
       const onSubmit = jest.fn()
       testFormData = mockInitialData
-      
+
       render(
         <VacancyWizard
           steps={getMockSteps()}
@@ -292,7 +292,7 @@ describe('VacancyWizard', () => {
       )
 
       const nameInput = screen.getByTestId('name-input') as HTMLInputElement
-      
+
       // Type in input
       fireEvent.change(nameInput, { target: { value: 'Jane' } })
 
@@ -305,7 +305,7 @@ describe('VacancyWizard', () => {
     it('behoudt form data bij navigatie', async () => {
       const onSubmit = jest.fn()
       testFormData = mockInitialData
-      
+
       render(
         <VacancyWizard
           steps={getMockSteps()}
@@ -344,7 +344,7 @@ describe('VacancyWizard', () => {
       const onSubmit = jest.fn()
       const filledData = { name: 'John', email: 'john@test.com', preferences: [] }
       testFormData = filledData
-      
+
       render(
         <VacancyWizard
           steps={getMockSteps()}
@@ -378,7 +378,7 @@ describe('VacancyWizard', () => {
       )
       const filledData = { name: 'John', email: 'john@test.com', preferences: [] }
       testFormData = filledData
-      
+
       render(
         <VacancyWizard
           steps={getMockSteps()}
@@ -408,7 +408,7 @@ describe('VacancyWizard', () => {
       const onSubmit = jest.fn((): Promise<void> => Promise.reject(new Error('Submit failed')))
       const filledData = { name: 'John', email: 'john@test.com', preferences: [] }
       testFormData = filledData
-      
+
       render(
         <VacancyWizard
           steps={getMockSteps()}
@@ -441,7 +441,7 @@ describe('VacancyWizard', () => {
       const onSubmit = jest.fn()
       const filledData = { name: 'John', email: 'john@test.com', preferences: [] }
       testFormData = filledData
-      
+
       render(
         <VacancyWizard
           steps={getMockSteps()}
@@ -497,7 +497,7 @@ describe('VacancyWizardContainer', () => {
 
   it('rendert met children render prop', () => {
     const onSubmit = jest.fn()
-    
+
     render(
       <VacancyWizardContainer
         steps={containerMockSteps}
@@ -519,7 +519,7 @@ describe('VacancyWizardContainer', () => {
   it('geeft wizard object door aan children', () => {
     const onSubmit = jest.fn()
     const childrenFn = jest.fn(() => <div>Content</div>)
-    
+
     render(
       <VacancyWizardContainer
         steps={containerMockSteps}
@@ -543,7 +543,7 @@ describe('VacancyWizardContainer', () => {
 
   it('verbergt progress wanneer showProgress=false', () => {
     const onSubmit = jest.fn()
-    
+
     render(
       <VacancyWizardContainer
         steps={containerMockSteps}

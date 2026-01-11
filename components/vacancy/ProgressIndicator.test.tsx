@@ -14,7 +14,7 @@ describe('ProgressIndicator', () => {
       // Check voor alle stap buttons
       const buttons = screen.getAllByRole('button')
       expect(buttons).toHaveLength(4)
-      
+
       // Check voor stap labels
       expect(screen.getByText('Stap 1')).toBeInTheDocument()
       expect(screen.getByText('Stap 2')).toBeInTheDocument()
@@ -27,7 +27,7 @@ describe('ProgressIndicator', () => {
 
       // Stap 0 en 1 zijn voltooid, moeten checkmarks hebben
       const buttons = screen.getAllByRole('button')
-      
+
       // Check dat eerste stappen een checkmark SVG hebben
       const firstButton = buttons[0]
       const svg = firstButton.querySelector('svg')
@@ -51,7 +51,7 @@ describe('ProgressIndicator', () => {
       expect(screen.getByText('Stap 3')).toBeInTheDocument()
       expect(screen.getByText('Stap 4')).toBeInTheDocument()
     })
-    
+
     it('toont nummers voor current en upcoming stappen', () => {
       render(<ProgressIndicator {...defaultProps} currentStep={1} />)
 
@@ -74,11 +74,11 @@ describe('ProgressIndicator', () => {
       )
 
       const buttons = screen.getAllByRole('button')
-      
+
       // Klik op eerste stap (voltooid)
       fireEvent.click(buttons[0])
       expect(onStepClick).toHaveBeenCalledWith(0)
-      
+
       // Klik op tweede stap (voltooid)
       fireEvent.click(buttons[1])
       expect(onStepClick).toHaveBeenCalledWith(1)
@@ -95,7 +95,7 @@ describe('ProgressIndicator', () => {
       )
 
       const buttons = screen.getAllByRole('button')
-      
+
       // Klik op huidige stap (index 1)
       fireEvent.click(buttons[1])
       expect(onStepClick).toHaveBeenCalledWith(1)
@@ -113,11 +113,11 @@ describe('ProgressIndicator', () => {
       )
 
       const buttons = screen.getAllByRole('button')
-      
+
       // Klik op toekomstige stap (index 2)
       fireEvent.click(buttons[2])
       expect(onStepClick).not.toHaveBeenCalled()
-      
+
       // Klik op toekomstige stap (index 3)
       fireEvent.click(buttons[3])
       expect(onStepClick).not.toHaveBeenCalled()
@@ -135,7 +135,7 @@ describe('ProgressIndicator', () => {
       )
 
       const buttons = screen.getAllByRole('button')
-      
+
       // Klik op toekomstige stap
       fireEvent.click(buttons[2])
       expect(onStepClick).toHaveBeenCalledWith(2)
@@ -145,7 +145,7 @@ describe('ProgressIndicator', () => {
       render(<ProgressIndicator {...defaultProps} currentStep={1} />)
 
       const buttons = screen.getAllByRole('button')
-      
+
       // Moet geen error gooien
       expect(() => fireEvent.click(buttons[0])).not.toThrow()
     })
@@ -156,7 +156,7 @@ describe('ProgressIndicator', () => {
       render(<ProgressIndicator {...defaultProps} currentStep={2} />)
 
       const buttons = screen.getAllByRole('button')
-      
+
       // Stap 0 en 1 zijn completed
       expect(buttons[0]).toHaveClass('bg-indigo-500')
       expect(buttons[1]).toHaveClass('bg-indigo-500')
@@ -166,7 +166,7 @@ describe('ProgressIndicator', () => {
       render(<ProgressIndicator {...defaultProps} currentStep={1} />)
 
       const buttons = screen.getAllByRole('button')
-      
+
       // Stap 1 is current
       const currentButton = buttons[1]
       expect(currentButton.className).toContain('ring-4')
@@ -177,7 +177,7 @@ describe('ProgressIndicator', () => {
       render(<ProgressIndicator {...defaultProps} currentStep={1} />)
 
       const buttons = screen.getAllByRole('button')
-      
+
       // Stap 2 en 3 zijn upcoming
       expect(buttons[2]).toHaveClass('border-slate-300')
       expect(buttons[3]).toHaveClass('border-slate-300')
@@ -220,11 +220,11 @@ describe('ProgressIndicator', () => {
       )
 
       const buttons = screen.getAllByRole('button')
-      
+
       // Toekomstige stappen moeten disabled zijn
       expect(buttons[2]).toBeDisabled()
       expect(buttons[3]).toBeDisabled()
-      
+
       // Voltooide en huidige niet
       expect(buttons[0]).not.toBeDisabled()
       expect(buttons[1]).not.toBeDisabled()

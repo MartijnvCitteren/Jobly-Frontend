@@ -6,6 +6,7 @@
 
 import { useState, useCallback } from 'react'
 import { createCompanyAndVacancy } from '@/lib/api/vacancy-repository'
+import { handleError, type AppError } from '@/lib/utils/error-handler'
 import type {
   CompanyInfoRequest,
   JobInfoRequest,
@@ -25,8 +26,8 @@ export interface UseVacancyGenerationReturn {
   status: VacancyGenerationStatus
   /** Gegenereerde vacancy data (indien succesvol) */
   vacancy: GeneratedVacancy | null
-  /** Error message (indien gefaald) */
-  error: string | null
+  /** Error object (indien gefaald) */
+  error: AppError | null
   /** Functie om vacancy te genereren */
   generateVacancy: (
     companyInfo: CompanyInfoRequest,
@@ -67,7 +68,7 @@ export interface UseVacancyGenerationReturn {
 export function useVacancyGeneration(): UseVacancyGenerationReturn {
   const [status, setStatus] = useState<VacancyGenerationStatus>('idle')
   const [vacancy, setVacancy] = useState<GeneratedVacancy | null>(null)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<AppError | null>(null)
 
   /**
    * Genereer vacancy op basis van bedrijfs- en job informatie
@@ -87,11 +88,10 @@ export function useVacancyGeneration(): UseVacancyGenerationReturn {
         setVacancy(result)
         setStatus('success')
       } catch (err) {
-        // Error handling
-        const errorMessage =
-          err instanceof Error ? err.message : 'Er is een onbekende fout opgetreden'
+        // Error handling met de nieuwe error handler
+        const appError = handleError(err, 'useVacancyGeneration.generateVacancy')
 
-        setError(errorMessage)
+        setError(appError)
         setStatus('error')
         setVacancy(null)
       }

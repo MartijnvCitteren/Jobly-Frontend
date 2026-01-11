@@ -5,6 +5,9 @@ import { Card } from '../ui/Card'
 import { ProgressIndicator } from './ProgressIndicator'
 import { WizardNavigation } from './WizardNavigation'
 import { useFormWizard, WizardStep as WizardStepConfig } from '@/lib/hooks/useFormWizard'
+import { createLogger } from '@/lib/utils/logger'
+
+const logger = createLogger('VacancyWizard')
 
 export interface VacancyWizardProps<T> {
   /** Configuratie van de wizard stappen */
@@ -28,6 +31,14 @@ export interface VacancyWizardProps<T> {
   isLoading?: boolean
   /** Custom className voor de container */
   className?: string
+  /** Callback wanneer naar een nieuwe stap wordt gegaan */
+  onStepChange?: (data: {
+    fromStepIndex: number
+    toStepIndex: number
+    fromStepId: string
+    toStepId: string
+    formData: T
+  }) => void | Promise<void>
 }
 
 /**
@@ -92,6 +103,7 @@ export function VacancyWizard<T>({
   description,
   isLoading = false,
   className = '',
+  onStepChange,
 }: VacancyWizardProps<T>) {
   const wizard = useFormWizard<T>({
     steps,
@@ -100,13 +112,67 @@ export function VacancyWizard<T>({
 
   const [isSubmitting, setIsSubmitting] = React.useState(false)
 
+  // Wrap nextStep om onStepChange callback aan te roepen
+  const handleNextStep = React.useCallback(() => {
+    const fromIndex = wizard.currentStepIndex
+    const toIndex = fromIndex + 1
+
+    if (toIndex < steps.length && onStepChange) {
+      onStepChange({
+        fromStepIndex: fromIndex,
+        toStepIndex: toIndex,
+        fromStepId: steps[fromIndex].id,
+        toStepId: steps[toIndex].id,
+        formData: wizard.formData,
+      })
+    }
+
+    wizard.nextStep()
+  }, [wizard, steps, onStepChange])
+
+  // Wrap previousStep om onStepChange callback aan te roepen
+  const handlePreviousStep = React.useCallback(() => {
+    const fromIndex = wizard.currentStepIndex
+    const toIndex = fromIndex - 1
+
+    if (toIndex >= 0 && onStepChange) {
+      onStepChange({
+        fromStepIndex: fromIndex,
+        toStepIndex: toIndex,
+        fromStepId: steps[fromIndex].id,
+        toStepId: steps[toIndex].id,
+        formData: wizard.formData,
+      })
+    }
+
+    wizard.previousStep()
+  }, [wizard, steps, onStepChange])
+
+  // Wrap goToStep om onStepChange callback aan te roepen
+  const handleGoToStep = React.useCallback((toIndex: number) => {
+    const fromIndex = wizard.currentStepIndex
+
+    if (fromIndex !== toIndex && onStepChange) {
+      onStepChange({
+        fromStepIndex: fromIndex,
+        toStepIndex: toIndex,
+        fromStepId: steps[fromIndex].id,
+        toStepId: steps[toIndex].id,
+        formData: wizard.formData,
+      })
+    }
+
+    wizard.goToStep(toIndex)
+  }, [wizard, steps, onStepChange])
+
   const handleSubmit = async () => {
     setIsSubmitting(true)
     try {
       await onSubmit(wizard.formData)
+      logger.info('Wizard submitted successfully')
     } catch (error) {
-      console.error('Error submitting wizard:', error)
-      // TODO: Error handling - show error message to user
+      logger.error('Error submitting wizard', error)
+      // Error handling wordt gedaan door de parent component
     } finally {
       setIsSubmitting(false)
     }
@@ -138,7 +204,7 @@ export function VacancyWizard<T>({
           totalSteps={steps.length}
           currentStep={wizard.currentStepIndex}
           stepLabels={stepLabels}
-          onStepClick={wizard.goToStep}
+          onStepClick={handleGoToStep}
           onlyCompletedClickable={true}
         />
       </div>
@@ -162,8 +228,8 @@ export function VacancyWizard<T>({
           isFirstStep={wizard.isFirstStep}
           isLastStep={wizard.isLastStep}
           isCurrentStepValid={wizard.isCurrentStepValid}
-          onPrevious={wizard.previousStep}
-          onNext={wizard.nextStep}
+          onPrevious={handlePreviousStep}
+          onNext={handleNextStep}
           onSubmit={handleSubmit}
           isLoading={isLoading || isSubmitting}
         />
@@ -221,8 +287,9 @@ export function VacancyWizardContainer<T>({
     setIsSubmitting(true)
     try {
       await onSubmit(wizard.formData)
+      logger.info('Wizard container submitted successfully')
     } catch (error) {
-      console.error('Error submitting wizard:', error)
+      logger.error('Error submitting wizard container', error)
     } finally {
       setIsSubmitting(false)
     }

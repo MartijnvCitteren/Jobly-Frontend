@@ -19,6 +19,7 @@ De hoofd wizard component die alles samenbrengt. Gebruikt het **Compound Compone
 - Form validatie per stap
 - Loading states
 - Type-safe met TypeScript generics
+- **onStepChange callback** voor progressive actions (NIEUW!)
 
 **Gebruik:**
 
@@ -34,25 +35,36 @@ interface MyFormData {
 
 function CreateVacancyPage() {
   const steps: WizardStep[] = [
-    { 
-      id: 'basics', 
+    {
+      id: 'basics',
       label: 'Basis Informatie',
       validate: () => !!formData.jobTitle && !!formData.company
     },
-    { 
-      id: 'details', 
+    {
+      id: 'details',
       label: 'Details',
       validate: () => !!formData.description
     },
-    { 
-      id: 'review', 
-      label: 'Controleren' 
+    {
+      id: 'review',
+      label: 'Controleren'
     }
   ]
 
   const handleSubmit = async (data: MyFormData) => {
     console.log('Submitting:', data)
     // API call hier
+  }
+
+  // NIEUW: Handler voor wanneer gebruiker naar een andere stap gaat
+  const handleStepChange = async ({ fromStepId, formData }) => {
+    // Bijvoorbeeld: fire-and-forget API call bij verlaten van eerste stap
+    if (fromStepId === 'basics') {
+      // Verzend data in achtergrond, zonder te wachten
+      sendBasicInfoToAPI(formData).catch(error => {
+        console.error('Background API call failed:', error)
+      })
+    }
   }
 
   const renderStep = ({ stepId, formData, updateFormData }) => {
@@ -71,11 +83,50 @@ function CreateVacancyPage() {
       steps={steps}
       initialData={{ jobTitle: '', company: '', description: '' }}
       onSubmit={handleSubmit}
+      onStepChange={handleStepChange}  // NIEUW!
       renderStep={renderStep}
       title="Maak een Vacature"
       description="Vul de informatie in om een professionele vacature te genereren"
     />
   )
+}
+```
+
+**onStepChange Callback:**
+
+De `onStepChange` callback wordt aangeroepen telkens wanneer de gebruiker naar een andere stap navigeert (via Next, Previous, of door op een stap te klikken in de progress indicator).
+
+**Parameters:**
+- `fromStepIndex`: Index van de stap waar de gebruiker vandaan komt (number)
+- `toStepIndex`: Index van de stap waar de gebruiker naartoe gaat (number)
+- `fromStepId`: ID van de stap waar de gebruiker vandaan komt (string)
+- `toStepId`: ID van de stap waar de gebruiker naartoe gaat (string)
+- `formData`: De huidige form data (T)
+
+**Use Cases:**
+- ✅ **Fire-and-forget API calls**: Verzend data in achtergrond bij verlaten van een stap voor betere UX
+- ✅ **Progressive data validation**: Valideer data tegen backend terwijl gebruiker doorgaat
+- ✅ **Analytics tracking**: Track wizard voortgang en drop-off punten
+- ✅ **Auto-save functionaliteit**: Sla form data automatisch op bij elke stap
+- ✅ **Conditional logic**: Toon/verberg stappen op basis van eerdere antwoorden
+
+**Voorbeeld: Fire-and-Forget API Pattern**
+
+```tsx
+const handleStepChange = async ({ fromStepId, formData }) => {
+  if (fromStepId === 'company') {
+    // Verzend company info in achtergrond
+    // Gebruiker hoeft niet te wachten
+    createCompanyInfo(formData.companyInfo)
+      .then(response => {
+        // Bewaar token voor later gebruik
+        setCompanyToken(response.token)
+      })
+      .catch(error => {
+        // Toon alleen directe errors
+        console.error('API error:', error)
+      })
+  }
 }
 ```
 
@@ -98,12 +149,12 @@ Alternative wizard container die meer flexibiliteit biedt via children render pr
         isActive={true}
       >
         {/* Your step content here */}
-        <YourStepComponent 
+        <YourStepComponent
           data={wizard.formData}
           onChange={wizard.updateFormData}
         />
       </WizardStep>
-      
+
       <WizardNavigation
         {...wizard}
         onSubmit={wizard.handleSubmit}
@@ -154,14 +205,14 @@ Helper component voor het groeperen van velden binnen een stap:
 
 ```tsx
 <WizardStep id="basics" title="Basis Informatie" isActive={true}>
-  <WizardStepSection 
+  <WizardStepSection
     title="Bedrijfsgegevens"
     description="Informatie over het bedrijf"
   >
     <Input label="Bedrijfsnaam" {...} />
     <Input label="Locatie" {...} />
   </WizardStepSection>
-  
+
   <WizardStepSection title="Functiegegevens">
     <Input label="Functietitel" {...} />
     <Select label="Niveau" {...} />
@@ -289,7 +340,7 @@ import { VacancyWizard } from '@/components/vacancy'
 
 test('navigates through wizard steps', () => {
   const handleSubmit = jest.fn()
-  
+
   render(
     <VacancyWizard
       steps={mockSteps}
@@ -298,14 +349,14 @@ test('navigates through wizard steps', () => {
       renderStep={mockRenderStep}
     />
   )
-  
+
   // Test initial state
   expect(screen.getByText('Stap 1')).toBeInTheDocument()
-  
+
   // Click next
   fireEvent.click(screen.getByText('Volgende'))
   expect(screen.getByText('Stap 2')).toBeInTheDocument()
-  
+
   // Go back
   fireEvent.click(screen.getByText('Vorige'))
   expect(screen.getByText('Stap 1')).toBeInTheDocument()

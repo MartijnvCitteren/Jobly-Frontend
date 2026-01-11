@@ -1,10 +1,12 @@
 /**
  * Vacancy Repository
  *
- * Repository pattern voor vacancy API calls
+ * Repository pattern voor vacancy API calls.
+ * Volgt het Repository Pattern voor clean separation of concerns.
  */
 
 import { post } from './client'
+import { API_ENDPOINTS, API_CONFIG } from '@/lib/config/constants'
 import type {
   CompanyInfoRequest,
   CompanyInfoResponse,
@@ -21,13 +23,13 @@ import type {
 export async function createCompanyInfo(
   companyInfo: CompanyInfoRequest
 ): Promise<CompanyInfoResponse> {
-  return post<CompanyInfoResponse>('/create-company-info', companyInfo)
+  return post<CompanyInfoResponse>(API_ENDPOINTS.COMPANY_INFO, companyInfo)
 }
 
 /**
  * Genereer vacaturetekst op basis van job informatie
  *
- * @param requestId - Token ontvangen van createCompanyInfo
+ * @param requestId - Token ontvangen van createCompanyInfo (wordt in header meegegeven)
  * @param jobInfo - Job informatie voor het genereren van de vacature
  * @returns Promise met gegenereerde vacaturetekst
  */
@@ -35,7 +37,15 @@ export async function createVacancy(
   requestId: string,
   jobInfo: JobInfoRequest
 ): Promise<GeneratedVacancy> {
-  return post<GeneratedVacancy>(`/create-vacancy?requestId=${requestId}`, jobInfo)
+  return post<GeneratedVacancy>(
+    API_ENDPOINTS.CREATE_VACANCY,
+    jobInfo,
+    {
+      headers: {
+        [API_CONFIG.REQUEST_ID_HEADER]: requestId,
+      },
+    }
+  )
 }
 
 /**
