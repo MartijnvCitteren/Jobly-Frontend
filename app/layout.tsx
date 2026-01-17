@@ -44,14 +44,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="nl" suppressHydrationWarning>
-      <head>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {/* Runtime configuratie - laadt voor alle andere scripts */}
         <Script
           src="/runtime-config.js"
           strategy="beforeInteractive"
         />
-      </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ErrorBoundary>{children}</ErrorBoundary>
       </body>
     </html>
