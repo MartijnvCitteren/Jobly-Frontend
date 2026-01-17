@@ -5,6 +5,9 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false, // Verbergt X-Powered-By header
 
+  // Output configuratie voor Docker
+  output: 'standalone',
+
   // Compiler optimizations
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production' ? {
