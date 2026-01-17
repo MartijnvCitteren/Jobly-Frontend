@@ -3,7 +3,25 @@
  *
  * Type-safe environment variable access met runtime validatie.
  * Alle environment variables worden hier gecentraliseerd en gevalideerd.
+ *
+ * Ondersteunt runtime configuratie via window.__RUNTIME_CONFIG__ voor Docker deployments.
  */
+
+/**
+ * Runtime configuratie interface (geladen vanuit window object)
+ */
+interface RuntimeConfig {
+  API_BASE_URL?: string
+}
+
+/**
+ * Extend Window interface voor runtime config
+ */
+declare global {
+  interface Window {
+    __RUNTIME_CONFIG__?: RuntimeConfig
+  }
+}
 
 /**
  * Environment variable schema
@@ -17,10 +35,13 @@ interface EnvConfig {
 }
 
 /**
- * Valideer een optional environment variable
+ * Haal runtime configuratie op vanuit window object (alleen in browser)
  */
-function getOptionalEnv(key: string, fallback: string): string {
-  return process.env[key] || fallback
+function getRuntimeConfig(): RuntimeConfig {
+  if (typeof window !== 'undefined' && window.__RUNTIME_CONFIG__) {
+    return window.__RUNTIME_CONFIG__
+  }
+  return {}
 }
 
 /**
@@ -64,17 +85,43 @@ function getNodeEnv(): 'development' | 'production' | 'test' {
 
 /**
  * Parse en valideer alle environment variables
+ *
+ * Prioriteit voor API URL:
+ * 1. Runtime config (window.__RUNTIME_CONFIG__.API_BASE_URL) - voor Docker
+ * 2. Build-time env var (NEXT_PUBLIC_API_URL) - voor development
+ * 3. Fallback naar localhost
  */
 function parseEnv(): EnvConfig {
   const nodeEnv = getNodeEnv()
 
-  // API URL met fallback voor development
-  const apiUrl = validateApiUrl(
-    getOptionalEnv('NEXT_PUBLIC_API_URL', 'http://localhost:8090/api/v1')
-  )
+  // Haal runtime config op (alleen in browser)
+  const runtimeConfig = getRuntimeConfig()
+
+  // Bepaal API base URL met prioriteit
+  let apiBaseUrl: string
+
+  if (runtimeConfig.API_BASE_URL && runtimeConfig.API_BASE_URL !== '__API_BASE_URL__') {
+    // Runtime config heeft prioriteit (Docker deployment)
+    apiBaseUrl = runtimeConfig.API_BASE_URL
+  } else if (process.env.NEXT_PUBLIC_API_URL) {
+    // Build-time environment variable (development)
+    apiBaseUrl = process.env.NEXT_PUBLIC_API_URL
+  } else {
+    // Fallback voor local development
+    apiBaseUrl = 'http://localhost:8090'
+  }
+
+  // Voeg /api/v1 toe als het er niet al is
+  let apiUrl = apiBaseUrl
+  if (!apiUrl.endsWith('/api/v1')) {
+    apiUrl = `${apiUrl.replace(/\/$/, '')}/api/v1`
+  }
+
+  // Valideer de uiteindelijke API URL
+  const validatedApiUrl = validateApiUrl(apiUrl)
 
   return {
-    API_URL: apiUrl,
+    API_URL: validatedApiUrl,
     NODE_ENV: nodeEnv,
     IS_DEVELOPMENT: nodeEnv === 'development',
     IS_PRODUCTION: nodeEnv === 'production',

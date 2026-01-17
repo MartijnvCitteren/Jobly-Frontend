@@ -189,3 +189,6 @@ sketch
 .ionide
 
 # End of https://www.toptal.com/developers/gitignore/api/git,react,node,visualstudiocode
+design-examples/design-style
+.gitignore
+design-examples/nice_design.png

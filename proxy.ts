@@ -1,8 +1,10 @@
 /**
- * Next.js Middleware
+ * Next.js Proxy (voorheen Middleware)
  *
  * Voegt security headers toe aan alle responses.
  * Draait op Edge Runtime voor optimale performance.
+ *
+ * Note: In Next.js 16+, "middleware" is hernoemd naar "proxy"
  */
 
 import { NextResponse } from 'next/server'
@@ -62,9 +64,9 @@ const SECURITY_HEADERS = [
 ]
 
 /**
- * Middleware functie
+ * Proxy functie (voorheen middleware)
  */
-export function middleware(_request: NextRequest) {
+export function proxy(_request: NextRequest) {
   const response = NextResponse.next()
 
   // Voeg security headers toe
