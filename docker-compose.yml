@@ -5,6 +5,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        # Pas aan naar 'local', 'develop', of 'production'
+        NEXT_PUBLIC_ENVIRONMENT: local
+        # Optioneel: overschrijf API URL
+        # NEXT_PUBLIC_API_URL: http://backend:8090/api/v1
     ports:
       - "3000:3000"
     environment:

@@ -5,6 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:local": "NEXT_PUBLIC_ENVIRONMENT=local next build",
+    "build:develop": "NEXT_PUBLIC_ENVIRONMENT=develop next build",
+    "build:production": "NEXT_PUBLIC_ENVIRONMENT=production next build",
     "start": "next start",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
@@ -16,7 +19,10 @@
     "test:coverage": "jest --coverage",
     "test:ci": "jest --ci --coverage --maxWorkers=2 --silent --bail",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
-    "validate": "npm run type-check && npm run lint && npm run test:ci"
+    "validate": "npm run type-check && npm run lint && npm run test:ci",
+    "docker:build:local": "docker build --build-arg NEXT_PUBLIC_ENVIRONMENT=local -t jobly-frontend:local .",
+    "docker:build:develop": "docker build --build-arg NEXT_PUBLIC_ENVIRONMENT=develop -t jobly-frontend:develop .",
+    "docker:build:production": "docker build --build-arg NEXT_PUBLIC_ENVIRONMENT=production -t jobly-frontend:prod ."
   },
   "dependencies": {
     "docx": "^9.5.1",

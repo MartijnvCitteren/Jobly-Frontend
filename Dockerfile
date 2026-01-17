@@ -12,6 +12,15 @@ RUN npm ci --only=production && npm cache clean --force
 FROM node:20-alpine AS builder
 WORKDIR /app
 
+# Environment arguments voor build-time configuratie
+# Gebruik: docker build --build-arg NEXT_PUBLIC_ENVIRONMENT=production
+ARG NEXT_PUBLIC_ENVIRONMENT=production
+ARG NEXT_PUBLIC_API_URL
+
+# Zet environment variables voor de build
+ENV NEXT_PUBLIC_ENVIRONMENT=${NEXT_PUBLIC_ENVIRONMENT}
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+
 # Kopieer dependencies van deps stage
 COPY --from=deps /app/node_modules ./node_modules
 COPY package.json package-lock.json ./
@@ -21,6 +30,9 @@ RUN npm ci
 
 # Kopieer source code
 COPY . .
+
+# Log build configuratie (voor debugging)
+RUN echo "Building with NEXT_PUBLIC_ENVIRONMENT=${NEXT_PUBLIC_ENVIRONMENT}"
 
 # Build de applicatie
 RUN npm run build
