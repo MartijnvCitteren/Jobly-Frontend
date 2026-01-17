@@ -63,13 +63,6 @@ describe('useMount', () => {
   it('should call multiple mount hooks in order', () => {
     const calls: number[] = []
 
-    const Component = () => {
-      useMount(() => calls.push(1))
-      useMount(() => calls.push(2))
-      useMount(() => calls.push(3))
-      return null
-    }
-
     renderHook(() => {
       useMount(() => calls.push(1))
       useMount(() => calls.push(2))
